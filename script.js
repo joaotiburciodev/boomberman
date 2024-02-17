@@ -177,7 +177,7 @@ function blowUpBomb(bomb) {
 function Bomb(row, col, size, owner) {
   this.row = row;
   this.col = col;
-  this.radius = grid * 0.4;
+  this.radius = grid * 0.2;
   this.size = size; // the size of the explosion
   this.owner = owner; // which player placed this bomb
   this.alive = true;
@@ -214,7 +214,7 @@ function Bomb(row, col, size, owner) {
     // draw bomb
     context.fillStyle = "black";
     context.beginPath();
-    context.arc(x, y, this.radius, 0, 2 * Math.PI);
+    context.arc(x, y, this.radius * 0.7, 0, 2 * Math.PI);
     context.fill();
 
     // draw bomb fuse moving up and down with the bomb size
@@ -224,7 +224,7 @@ function Bomb(row, col, size, owner) {
     context.beginPath();
     context.arc(
       (this.col + 0.75) * grid,
-      (this.row + 0.25) * grid - fuseY,
+      (this.row + 0.3) * grid - fuseY,
       10,
       Math.PI,
       -Math.PI / 2
@@ -258,7 +258,7 @@ function Explosion(row, col, dir, center) {
     const y = this.row * grid;
     const horizontal = this.dir.col;
     const vertical = this.dir.row;
-
+    const offSet = grid * 0.2;
     // create a fire effect by stacking red, orange, and yellow on top of
     // each other using progressively smaller rectangles
     context.fillStyle = "#D72B16"; // red
