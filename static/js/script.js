@@ -1,3 +1,7 @@
+import { Bomb } from "./bomb.js";
+import { drawSoftWall, drawWall } from "./mapTiles.js";
+import Player from "./player.js";
+
 // Initiate canvas
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
@@ -9,51 +13,9 @@ const numRows = 13;
 const numCols = 15;
 let grid = canvas.width / numCols;
 
-// create a new canvas and draw the soft wall image. then we can use this
-// canvas to draw the images later on
-const softWallCanvas = document.createElement("canvas");
-const softWallCtx = softWallCanvas.getContext("2d");
-softWallCanvas.width = softWallCanvas.height = grid;
-
-softWallCtx.fillStyle = "black";
-softWallCtx.fillRect(0, 0, grid, grid);
-softWallCtx.fillStyle = "#c16c45";
-
-// 1st row brick
-softWallCtx.fillRect(1, 0, grid * 0.4 - 1, grid * 0.33);
-softWallCtx.fillRect(grid * 0.4 + 1, 0, grid * 0.6 - 1, grid * 0.33);
-
-// 2nd row bricks
-softWallCtx.fillRect(1, grid * 0.33 + 1, grid * 0.2 - 1, grid * 0.33);
-softWallCtx.fillRect(grid * 0.2 + 1, grid * 0.33 + 1, grid * 0.6, grid * 0.33);
-softWallCtx.fillRect(
-  grid * 0.8 + 2,
-  grid * 0.33 + 1,
-  grid * 0.2 - 2,
-  grid * 0.33
-);
-
-// 3rd row bricks
-softWallCtx.fillRect(1, grid * 0.66 + 2, grid * 0.6 - 1, grid * 0.33 - 3);
-softWallCtx.fillRect(
-  grid * 0.6 + 1,
-  grid * 0.66 + 2,
-  grid * 0.4 - 1,
-  grid * 0.33 - 3
-);
-
-// create a new canvas and draw the soft wall image. then we can use this
-// canvas to draw the images later on
-const wallCanvas = document.createElement("canvas");
-const wallCtx = wallCanvas.getContext("2d");
-wallCanvas.width = wallCanvas.height = grid;
-
-wallCtx.fillStyle = "black";
-wallCtx.fillRect(0, 0, grid, grid);
-wallCtx.fillStyle = "white";
-wallCtx.fillRect(0, 0, grid - 0.5, grid - 2);
-wallCtx.fillStyle = "#a9a9a9";
-wallCtx.fillRect(2, 2, grid - 2, grid - 4);
+const player = new Player(context, grid);
+const softWallCanvas = drawSoftWall(grid);
+const wallCanvas = drawWall(grid);
 
 // create a mapping of object types
 const types = {
@@ -108,34 +70,19 @@ function generateLevel() {
 function blowUpBomb(bomb) {
   // bomb has already exploded so don't blow up again
   if (!bomb.alive) return;
-
   bomb.alive = false;
-
   // remove bomb from grid
   cells[bomb.row][bomb.col] = null;
-
   // explode bomb outward by size
   const dirs = [
-    {
-      // up
-      row: -1,
-      col: 0,
-    },
-    {
-      // down
-      row: 1,
-      col: 0,
-    },
-    {
-      // left
-      row: 0,
-      col: -1,
-    },
-    {
-      // right
-      row: 0,
-      col: 1,
-    },
+    // up
+    { row: -1, col: 0 },
+    // down
+    { row: 1, col: 0 },
+    // left
+    { row: 0, col: -1 },
+    // right
+    { row: 0, col: 1 },
   ];
   dirs.forEach((dir) => {
     for (let i = 0; i < bomb.size; i++) {
@@ -164,73 +111,12 @@ function blowUpBomb(bomb) {
         });
         blowUpBomb(nextBomb);
       }
-
       // stop the explosion if hit anything
       if (cell) {
         return;
       }
     }
   });
-}
-
-// bomb constructor function
-function Bomb(row, col, size, owner) {
-  this.row = row;
-  this.col = col;
-  this.radius = grid * 0.2;
-  this.size = size; // the size of the explosion
-  this.owner = owner; // which player placed this bomb
-  this.alive = true;
-  this.type = types.bomb;
-
-  // bomb blows up after 3 seconds
-  this.timer = 3000;
-
-  // update the bomb each frame
-  this.update = function (dt) {
-    this.timer -= dt;
-
-    // blow up bomb if timer is done
-    if (this.timer <= 0) {
-      return blowUpBomb(this);
-    }
-
-    // change the size of the bomb every half second. we can determine the size
-    // by dividing by 500 (half a second) and taking the ceiling of the result.
-    // then we can check if the result is even or odd and change the size
-    const interval = Math.ceil(this.timer / 500);
-    if (interval % 2 === 0) {
-      this.radius = grid * 0.4;
-    } else {
-      this.radius = grid * 0.5;
-    }
-  };
-
-  // render the bomb each frame
-  this.render = function () {
-    const x = (this.col + 0.5) * grid;
-    const y = (this.row + 0.5) * grid;
-
-    // draw bomb
-    context.fillStyle = "black";
-    context.beginPath();
-    context.arc(x, y, this.radius * 0.7, 0, 2 * Math.PI);
-    context.fill();
-
-    // draw bomb fuse moving up and down with the bomb size
-    const fuseY = this.radius === grid * 0.5 ? grid * 0.15 : 0;
-    context.strokeStyle = "white";
-    context.lineWidth = 5;
-    context.beginPath();
-    context.arc(
-      (this.col + 0.75) * grid,
-      (this.row + 0.3) * grid - fuseY,
-      10,
-      Math.PI,
-      -Math.PI / 2
-    );
-    context.stroke();
-  };
 }
 
 // explosion constructor function
@@ -286,51 +172,12 @@ function Explosion(row, col, dir, center) {
   };
 }
 
-// player character (just a simple circle)
-const playerImage = new Image();
-playerImage.src = "./pixilart-sprite.png";
-const numFrames = 6; // Número total de quadros na imagem sprite
-const frameWidth = 20; // Largura de cada quadro
-let currentFrame = 0; // Quadro atual exibido
-
-const player = {
-  row: 1,
-  col: 1,
-  numBombs: 1,
-  bombSize: 2,
-  radius: grid * 0.35,
-  life: 1,
-  scale: grid * 0.042,
-  render() {
-    const x = (this.col + 0.5) * grid;
-    const y = (this.row + 0.5) * grid;
-    context.save();
-    context.drawImage(
-      playerImage,
-      currentFrame * frameWidth,
-      0,
-      frameWidth,
-      25,
-      x - (frameWidth / 2) * this.scale,
-      y - (25 / 2) * this.scale,
-      frameWidth * this.scale,
-      25 * this.scale
-    );
-    context.restore();
-  },
-};
-
 // game loop
 let last;
 let dt;
-let animationFrameDelay = 40;
+
 function loop(timestamp) {
   requestAnimationFrame(loop);
-  animationFrameDelay--;
-  if (animationFrameDelay <= 0) {
-    currentFrame = (currentFrame + 1) % numFrames;
-    animationFrameDelay = 40;
-  }
   context.clearRect(0, 0, canvas.width, canvas.height);
 
   // calculate the time difference since the last update. requestAnimationFrame
@@ -397,7 +244,15 @@ document.addEventListener("keydown", function (e) {
     }).length < player.numBombs
   ) {
     // place bomb
-    const bomb = new Bomb(row, col, player.bombSize, player);
+    const bomb = new Bomb(
+      row,
+      col,
+      player.bombSize,
+      player,
+      grid,
+      context,
+      blowUpBomb
+    );
     entities.push(bomb);
     cells[row][col] = types.bomb;
   }
