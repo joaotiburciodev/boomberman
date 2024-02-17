@@ -1,0 +1,20 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+canvas {
+  background: forestgreen;
+  width: 80%;
+  height: 70%;
+}
