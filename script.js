@@ -1,21 +1,13 @@
 // Initiate canvas
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
-canvas.width = window.innerWidth * 0.8; // Ajuste conforme necessário
-canvas.height = window.innerWidth * 0.8 * (13 / 15); // Ajuste conforme necessário
+// canvas.width = window.innerWidth * 0.8 > 600 ? 600 : window.innerWidth * 0.8;
+// canvas.height = window.innerWidth * 0.7;
 
 // Set
-// const grid = 64;
 const numRows = 13;
 const numCols = 15;
-const grid = Math.min(canvas.width / numCols, canvas.height / numRows);
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth * 0.8; // Ajuste conforme necessário
-  canvas.height = window.innerHeight * 0.7; // Ajuste conforme necessário
-  // Atualize outras variáveis e elementos relacionados ao tamanho da tela, se necessário.
-  console.log(canvas.width / numCols);
-});
+let grid = canvas.width / numCols;
 
 // create a new canvas and draw the soft wall image. then we can use this
 // canvas to draw the images later on
@@ -25,18 +17,30 @@ softWallCanvas.width = softWallCanvas.height = grid;
 
 softWallCtx.fillStyle = "black";
 softWallCtx.fillRect(0, 0, grid, grid);
-softWallCtx.fillStyle = "#a9a9a9";
+softWallCtx.fillStyle = "#c16c45";
 
 // 1st row brick
-softWallCtx.fillRect(1, 1, grid - 2, 20);
+softWallCtx.fillRect(1, 0, grid * 0.4 - 1, grid * 0.33);
+softWallCtx.fillRect(grid * 0.4 + 1, 0, grid * 0.6 - 1, grid * 0.33);
 
 // 2nd row bricks
-softWallCtx.fillRect(0, 23, 20, 18);
-softWallCtx.fillRect(22, 23, 42, 18);
+softWallCtx.fillRect(1, grid * 0.33 + 1, grid * 0.2 - 1, grid * 0.33);
+softWallCtx.fillRect(grid * 0.2 + 1, grid * 0.33 + 1, grid * 0.6, grid * 0.33);
+softWallCtx.fillRect(
+  grid * 0.8 + 2,
+  grid * 0.33 + 1,
+  grid * 0.2 - 2,
+  grid * 0.33
+);
 
 // 3rd row bricks
-softWallCtx.fillRect(0, 43, 42, 20);
-softWallCtx.fillRect(44, 43, 20, 20);
+softWallCtx.fillRect(1, grid * 0.66 + 2, grid * 0.6 - 1, grid * 0.33 - 3);
+softWallCtx.fillRect(
+  grid * 0.6 + 1,
+  grid * 0.66 + 2,
+  grid * 0.4 - 1,
+  grid * 0.33 - 3
+);
 
 // create a new canvas and draw the soft wall image. then we can use this
 // canvas to draw the images later on
@@ -47,9 +51,9 @@ wallCanvas.width = wallCanvas.height = grid;
 wallCtx.fillStyle = "black";
 wallCtx.fillRect(0, 0, grid, grid);
 wallCtx.fillStyle = "white";
-wallCtx.fillRect(0, 0, grid - 2, grid - 2);
+wallCtx.fillRect(0, 0, grid - 0.5, grid - 2);
 wallCtx.fillStyle = "#a9a9a9";
-wallCtx.fillRect(2, 2, grid - 4, grid - 4);
+wallCtx.fillRect(2, 2, grid - 2, grid - 4);
 
 // create a mapping of object types
 const types = {
@@ -283,29 +287,50 @@ function Explosion(row, col, dir, center) {
 }
 
 // player character (just a simple circle)
+const playerImage = new Image();
+playerImage.src = "./pixilart-sprite.png";
+const numFrames = 6; // Número total de quadros na imagem sprite
+const frameWidth = 20; // Largura de cada quadro
+let currentFrame = 0; // Quadro atual exibido
+
 const player = {
   row: 1,
   col: 1,
   numBombs: 1,
-  bombSize: 3,
+  bombSize: 2,
   radius: grid * 0.35,
+  life: 1,
+  scale: grid * 0.042,
   render() {
     const x = (this.col + 0.5) * grid;
     const y = (this.row + 0.5) * grid;
-
     context.save();
-    context.fillStyle = "white";
-    context.beginPath();
-    context.arc(x, y, this.radius, 0, 2 * Math.PI);
-    context.fill();
+    context.drawImage(
+      playerImage,
+      currentFrame * frameWidth,
+      0,
+      frameWidth,
+      25,
+      x - (frameWidth / 2) * this.scale,
+      y - (25 / 2) * this.scale,
+      frameWidth * this.scale,
+      25 * this.scale
+    );
+    context.restore();
   },
 };
 
 // game loop
 let last;
 let dt;
+let animationFrameDelay = 40;
 function loop(timestamp) {
   requestAnimationFrame(loop);
+  animationFrameDelay--;
+  if (animationFrameDelay <= 0) {
+    currentFrame = (currentFrame + 1) % numFrames;
+    animationFrameDelay = 40;
+  }
   context.clearRect(0, 0, canvas.width, canvas.height);
 
   // calculate the time difference since the last update. requestAnimationFrame
@@ -346,26 +371,25 @@ function loop(timestamp) {
 document.addEventListener("keydown", function (e) {
   let row = player.row;
   let col = player.col;
-
   // left arrow key
-  if (e.which === 37) {
+  if (e.key === "ArrowLeft" || e.code === "KeyA") {
     col--;
   }
   // up arrow key
-  else if (e.which === 38) {
+  else if (e.key === "ArrowUp" || e.code === "KeyW") {
     row--;
   }
   // right arrow key
-  else if (e.which === 39) {
+  else if (e.key === "ArrowRight" || e.code === "KeyD") {
     col++;
   }
   // down arrow key
-  else if (e.which === 40) {
+  else if (e.key === "ArrowDown" || e.code === "KeyS") {
     row++;
   }
   // space key (bomb)
   else if (
-    e.which === 32 &&
+    e.code === "Space" &&
     !cells[row][col] &&
     // count the number of bombs the player has placed
     entities.filter((entity) => {
