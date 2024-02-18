@@ -1,3 +1,4 @@
+import PlayerAI from "./aiPlayer.js";
 import { Bomb } from "./bomb.js";
 import { drawMap, generateLevel } from "./mapGenerator.js";
 import { drawSoftWall, drawWall } from "./mapTiles.js";
@@ -33,10 +34,13 @@ const gameData = {
 };
 
 const player = new Player(gameData);
+const aiPlayer = new PlayerAI(gameData);
 
 // game loop
 let last;
 let dt;
+
+let aiMoveTimer = 60;
 
 function loop(timestamp) {
   requestAnimationFrame(loop);
@@ -62,6 +66,12 @@ function loop(timestamp) {
   gameData.entities = gameData.entities.filter((entity) => entity.alive);
 
   player.render();
+  aiPlayer.render();
+  aiMoveTimer--;
+  if (aiMoveTimer <= 0) {
+    aiPlayer.move();
+    aiMoveTimer = 60;
+  }
 }
 
 // listen to keyboard events to move the snake

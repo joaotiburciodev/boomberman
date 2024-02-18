@@ -159,7 +159,7 @@ export function Bomb(row, col, size, owner, gameData) {
               entity.col === col
             );
           });
-          blowUpBomb(nextBomb);
+          nextBomb.blowUpBomb();
         }
         // stop the explosion if hit anything
         if (cell) {
@@ -167,5 +167,6 @@ export function Bomb(row, col, size, owner, gameData) {
         }
       }
     });
+    this.owner.bombsPlaced--;
   };
 }
