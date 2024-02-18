@@ -1,5 +1,9 @@
 # Bomberman HTML Game
 
+<p align="center">
+  <img src="./static//images/game-screenshot.png" alt="Game Screenshot" width="500" max-width="100%">
+</p>
+
 ## Overview
 
 This project is a simple implementation of the classic Bomberman game using HTML5 Canvas. It provides a basic framework for a one-player game with player-controlled and AI-controlled characters.
