@@ -1,7 +1,7 @@
 import { Bomb } from "./bomb.js";
 // player character (just a simple circle)
 const playerImage = new Image();
-playerImage.src = "./pixilart-sprite.png";
+playerImage.src = "./static/images/pixilart-sprite.png";
 const numFrames = 6; // Número total de quadros na imagem sprite
 const frameWidth = 20; // Largura de cada quadro
 let currentFrame = 0; // Quadro atual exibido
@@ -99,16 +99,11 @@ function PlayerAI(gameData) {
   };
   this.makeSmartMove = function () {
     const nearestSoftWall = this.findNearestSoftWall();
-    console.log(nearestSoftWall);
     if (nearestSoftWall) {
       const move = this.calculateMoveTowards(
         nearestSoftWall.row,
         nearestSoftWall.col
       );
-      console.log(
-        isValidMove(this.row + move.row, this.col + move.col, gameData)
-      );
-
       // Verifica se é possível mover nesta direção antes de aplicar o movimento
       if (isValidMove(this.row + move.row, this.col + move.col, gameData)) {
         this.row += move.row;

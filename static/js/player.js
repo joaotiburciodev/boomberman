@@ -1,6 +1,6 @@
 // player character (just a simple circle)
 const playerImage = new Image();
-playerImage.src = "./pixilart-sprite.png";
+playerImage.src = "./static/images/pixilart-sprite.png";
 const numFrames = 6; // Número total de quadros na imagem sprite
 const frameWidth = 20; // Largura de cada quadro
 let currentFrame = 0; // Quadro atual exibido
