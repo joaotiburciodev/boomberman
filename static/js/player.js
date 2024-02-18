@@ -6,19 +6,19 @@ const frameWidth = 20; // Largura de cada quadro
 let currentFrame = 0; // Quadro atual exibido
 let animationFrameDelay = 40;
 
-function Player(context, grid) {
+function Player(gameData) {
   this.row = 1;
   this.col = 1;
   this.numBombs = 1;
   this.bombSize = 2;
-  this.radius = grid * 0.35;
+  this.radius = gameData.canvas.grid * 0.35;
   this.life = 1;
-  this.scale = grid * 0.042;
+  this.scale = gameData.canvas.grid * 0.042;
   this.render = function () {
-    const x = (this.col + 0.5) * grid;
-    const y = (this.row + 0.5) * grid;
-    context.save();
-    context.drawImage(
+    const x = (this.col + 0.5) * gameData.canvas.grid;
+    const y = (this.row + 0.5) * gameData.canvas.grid;
+    gameData.canvas.context.save();
+    gameData.canvas.context.drawImage(
       playerImage,
       currentFrame * frameWidth,
       0,
@@ -34,7 +34,7 @@ function Player(context, grid) {
       currentFrame = (currentFrame + 1) % numFrames;
       animationFrameDelay = 40;
     }
-    context.restore();
+    gameData.canvas.context.restore();
   };
 }
 export default Player;

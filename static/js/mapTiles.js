@@ -36,7 +36,7 @@ export const drawSoftWall = (grid) => {
     grid * 0.4 - 1,
     grid * 0.33 - 3
   );
-
+  console.log(softWallCanvas);
   return softWallCanvas;
 };
 
@@ -53,6 +53,6 @@ export const drawWall = (grid) => {
   wallCtx.fillRect(0, 0, grid - 0.5, grid - 2);
   wallCtx.fillStyle = "#a9a9a9";
   wallCtx.fillRect(2, 2, grid - 2, grid - 4);
-
+  console.log(grid);
   return wallCanvas;
 };
