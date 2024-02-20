@@ -57,6 +57,13 @@ export function drawMap(gameData) {
             row * gameData.canvas.grid
           );
           break;
+        case gameData.canvas.tileTypes.bombPlus:
+          gameData.canvas.context.drawImage(
+            gameData.canvas.tiles.bombPlus,
+            col * gameData.canvas.grid,
+            row * gameData.canvas.grid
+          );
+          break;
       }
     }
   }

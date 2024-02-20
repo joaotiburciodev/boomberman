@@ -1,7 +1,7 @@
 import PlayerAI from "./aiPlayer.js";
 import { Bomb } from "./bomb.js";
 import { drawMap, generateLevel } from "./mapGenerator.js";
-import { drawSoftWall, drawWall } from "./mapTiles.js";
+import { drawBombPlus, drawSoftWall, drawWall } from "./mapTiles.js";
 import Player from "./player.js";
 
 // Initiate canvas
@@ -15,6 +15,8 @@ const gameData = {
       wall: "▉",
       softWall: 1,
       bomb: 2,
+      bombPlus: 3,
+      fire: 4,
     }),
     numRows: 13,
     numCols: 15,
@@ -22,11 +24,14 @@ const gameData = {
     tiles: {
       softWallCanvas: drawSoftWall(canvas.width / 15),
       wallCanvas: drawWall(canvas.width / 15),
+      bombPlus: drawBombPlus(canvas.width / 15),
     },
     tileTypes: {
       wall: "▉",
       softWall: 1,
       bomb: 2,
+      bombPlus: 3,
+      fire: 4,
     },
   },
   // keep track of all entities
@@ -120,6 +125,11 @@ document.addEventListener("keydown", function (e) {
   if (!gameData.canvas.cells[row][col]) {
     player.row = row;
     player.col = col;
+  } else if (gameData.canvas.cells[row][col] === 3) {
+    player.row = row;
+    player.col = col;
+    gameData.canvas.cells[row][col] = undefined;
+    player.numBombs += 1;
   }
 });
 

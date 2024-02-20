@@ -161,6 +161,10 @@ export function Bomb(row, col, size, owner, gameData) {
           });
           nextBomb.blowUpBomb();
         }
+        if (cell === gameData.canvas.tileTypes.softWall) {
+          const powerUpChange = Math.random() > 0.7;
+          if (powerUpChange) gameData.canvas.cells[row][col] = 3;
+        }
         // stop the explosion if hit anything
         if (cell) {
           return;

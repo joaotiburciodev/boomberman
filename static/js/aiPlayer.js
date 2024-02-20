@@ -6,6 +6,12 @@ const numFrames = 4; // Número total de quadros na imagem sprite
 const frameWidth = 20; // Largura de cada quadro
 let currentFrame = 0; // Quadro atual exibido
 let animationFrameDelay = 40;
+const moves = [
+  { row: 0, col: -1, direction: "left" }, // Esquerda
+  { row: -1, col: 0, direction: "up" }, // Cima
+  { row: 0, col: 1, direction: "right" }, // Direita
+  { row: 1, col: 0, direction: "down" }, // Baixo
+];
 
 function isValidMove(row, col, gameData) {
   // Adicione lógica aqui para verificar se a posição é válida (por exemplo, não colidir com paredes)
@@ -14,7 +20,7 @@ function isValidMove(row, col, gameData) {
     row < gameData.canvas.numRows &&
     col >= 0 &&
     col < gameData.canvas.numCols &&
-    !gameData.canvas.cells[row][col]
+    (!gameData.canvas.cells[row][col] || gameData.canvas.cells[row][col] === 3)
   );
 }
 
@@ -73,13 +79,6 @@ function PlayerAI(gameData) {
     gameData.canvas.context.restore();
   };
   this.move = function () {
-    const moves = [
-      { row: 0, col: -1, direction: "left" }, // Esquerda
-      { row: -1, col: 0, direction: "up" }, // Cima
-      { row: 0, col: 1, direction: "right" }, // Direita
-      { row: 1, col: 0, direction: "down" }, // Baixo
-    ];
-
     // Verifica se há um bloco quebrável nas proximidades
     for (const move of moves) {
       const newRow = this.row + move.row;
@@ -99,25 +98,22 @@ function PlayerAI(gameData) {
       }
     }
     this.makeSmartMove();
+    if (gameData.canvas.cells[this.row][this.col] === 3) {
+      this.numBombs += 1;
+      gameData.canvas.cells[this.row][this.col] = undefined;
+    }
   };
   this.makeRandomMove = function () {
-    const moves = [
-      { row: 0, col: -1, direction: "left" }, // Esquerda
-      { row: -1, col: 0, direction: "up" }, // Cima
-      { row: 0, col: 1, direction: "right" }, // Direita
-      { row: 1, col: 0, direction: "down" }, // Baixo
-    ];
-
     // Escolhe um movimento aleatório
     const randomMove = moves[Math.floor(Math.random() * moves.length)];
 
     // Verifica se o movimento é válido antes de aplicá-lo
     const newRow = this.row + randomMove.row;
     const newCol = this.col + randomMove.col;
-    this.looking = randomMove.direction;
     if (isValidMove(newRow, newCol, gameData)) {
       this.row = newRow;
       this.col = newCol;
+      this.looking = randomMove.direction;
     }
   };
   this.makeSmartMove = function () {

@@ -56,3 +56,33 @@ export const drawWall = (grid) => {
   console.log(grid);
   return wallCanvas;
 };
+
+export const drawBombPlus = (grid) => {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  canvas.width = canvas.height = grid;
+  context.fillStyle = "black";
+  context.beginPath();
+  context.arc(grid * 0.5, grid * 0.5, grid * 0.3, 0, 2 * Math.PI);
+  context.fill();
+
+  // draw bomb fuse moving up and down with the bomb size
+  context.strokeStyle = "white";
+  context.lineWidth = 5;
+  context.beginPath();
+  context.arc(0.75 * grid, 0.3 * grid, 10, Math.PI, -Math.PI / 2);
+  context.stroke();
+
+  // draw bomb fuse moving up and down with the bomb size
+  context.strokeStyle = "yellow";
+  context.lineWidth = 5;
+  context.beginPath();
+  context.moveTo(grid * 0.3, grid * 0.5);
+  context.lineTo(grid * 0.7, grid * 0.5);
+  context.moveTo(grid * 0.5, grid * 0.3);
+  context.lineTo(grid * 0.5, grid * 0.7);
+
+  context.stroke();
+
+  return canvas;
+};
