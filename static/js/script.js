@@ -81,18 +81,22 @@ document.addEventListener("keydown", function (e) {
   // left arrow key
   if (e.key === "ArrowLeft" || e.code === "KeyA") {
     col--;
+    player.looking = "left";
   }
   // up arrow key
   else if (e.key === "ArrowUp" || e.code === "KeyW") {
     row--;
+    player.looking = "up";
   }
   // right arrow key
   else if (e.key === "ArrowRight" || e.code === "KeyD") {
     col++;
+    player.looking = "right";
   }
   // down arrow key
   else if (e.key === "ArrowDown" || e.code === "KeyS") {
     row++;
+    player.looking = "down";
   }
   // space key (bomb)
   else if (
