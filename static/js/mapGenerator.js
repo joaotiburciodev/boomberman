@@ -64,6 +64,20 @@ export function drawMap(gameData) {
             row * gameData.canvas.grid
           );
           break;
+        case gameData.canvas.tileTypes.fire:
+          gameData.canvas.context.drawImage(
+            gameData.canvas.tiles.fire,
+            col * gameData.canvas.grid,
+            row * gameData.canvas.grid
+          );
+          break;
+        case gameData.canvas.tileTypes.wheels:
+          gameData.canvas.context.drawImage(
+            gameData.canvas.tiles.wheels,
+            col * gameData.canvas.grid,
+            row * gameData.canvas.grid
+          );
+          break;
       }
     }
   }

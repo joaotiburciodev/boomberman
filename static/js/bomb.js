@@ -4,6 +4,7 @@ function Explosion(row, col, dir, center, grid, context) {
   this.col = col;
   this.dir = dir;
   this.alive = true;
+  this.type = "explosion"; // tag for collision detection
 
   // show explosion for 0.3 seconds
   this.timer = 300;
@@ -162,8 +163,15 @@ export function Bomb(row, col, size, owner, gameData) {
           nextBomb.blowUpBomb();
         }
         if (cell === gameData.canvas.tileTypes.softWall) {
-          const powerUpChange = Math.random() > 0.7;
-          if (powerUpChange) gameData.canvas.cells[row][col] = 3;
+          // chance to drop a power-up when a soft wall is destroyed
+          const roll = Math.random();
+          if (roll < 0.2) {
+            gameData.canvas.cells[row][col] = gameData.canvas.tileTypes.bombPlus;
+          } else if (roll < 0.35) {
+            gameData.canvas.cells[row][col] = gameData.canvas.tileTypes.fire;
+          } else if (roll < 0.5) {
+            gameData.canvas.cells[row][col] = gameData.canvas.tileTypes.wheels;
+          }
         }
         // stop the explosion if hit anything
         if (cell) {

@@ -10,6 +10,20 @@
 
 <body>
     <canvas width="960" height="832" id="canvas"></canvas>
+    <!-- Start Menu Overlay -->
+    <div id="menu" class="menu-overlay">
+      <div class="menu-card">
+        <h1>Bomberman</h1>
+        <p>Selecione o número de IAs</p>
+        <div class="menu-buttons">
+          <button data-ais="0">0 IA</button>
+          <button data-ais="1">1 IA</button>
+          <button data-ais="2">2 IAs</button>
+          <button data-ais="3">3 IAs</button>
+        </div>
+        <small>WASD/Setas para mover, Espaço para bomba • R para reiniciar</small>
+      </div>
+    </div>
     <script type="module" src="./static/js/script.js"></script>
 </body>
 

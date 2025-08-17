@@ -86,3 +86,86 @@ export const drawBombPlus = (grid) => {
 
   return canvas;
 };
+
+export const drawFire = (grid) => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = canvas.height = grid;
+
+  // base glow
+  const grad = ctx.createRadialGradient(
+    grid * 0.5,
+    grid * 0.6,
+    grid * 0.1,
+    grid * 0.5,
+    grid * 0.6,
+    grid * 0.45
+  );
+  grad.addColorStop(0, "#FFE5A8");
+  grad.addColorStop(0.6, "#F39642");
+  grad.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, grid, grid);
+
+  // flame shape
+  ctx.fillStyle = "#D72B16";
+  ctx.beginPath();
+  ctx.moveTo(grid * 0.5, grid * 0.15);
+  ctx.bezierCurveTo(
+    grid * 0.8,
+    grid * 0.25,
+    grid * 0.75,
+    grid * 0.65,
+    grid * 0.5,
+    grid * 0.85
+  );
+  ctx.bezierCurveTo(
+    grid * 0.25,
+    grid * 0.65,
+    grid * 0.2,
+    grid * 0.25,
+    grid * 0.5,
+    grid * 0.15
+  );
+  ctx.fill();
+
+  return canvas;
+};
+
+export const drawWheels = (grid) => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = canvas.height = grid;
+
+  // wheel body
+  ctx.fillStyle = "#333";
+  ctx.beginPath();
+  ctx.arc(grid * 0.5, grid * 0.5, grid * 0.32, 0, Math.PI * 2);
+  ctx.fill();
+
+  // spokes
+  ctx.strokeStyle = "#ddd";
+  ctx.lineWidth = Math.max(2, grid * 0.05);
+  for (let i = 0; i < 6; i++) {
+    const angle = (i * Math.PI * 2) / 6;
+    ctx.beginPath();
+    ctx.moveTo(grid * 0.5, grid * 0.5);
+    ctx.lineTo(
+      grid * 0.5 + Math.cos(angle) * grid * 0.28,
+      grid * 0.5 + Math.sin(angle) * grid * 0.28
+    );
+    ctx.stroke();
+  }
+
+  // rim
+  ctx.strokeStyle = "#888";
+  ctx.lineWidth = Math.max(2, grid * 0.04);
+  ctx.beginPath();
+  ctx.arc(grid * 0.5, grid * 0.5, grid * 0.32, 0, Math.PI * 2);
+  ctx.stroke();
+
+  return canvas;
+};
+
+// removed duplicate drawFire and drawWheels definitions
+

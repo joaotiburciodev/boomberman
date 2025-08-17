@@ -13,6 +13,7 @@ function Player(gameData) {
   this.bombSize = 2;
   this.radius = gameData.canvas.grid * 0.35;
   this.life = 1;
+  this.speed = 1; // tiles per key press
   this.scale = gameData.canvas.grid * 0.042;
   this.render = function () {
     const x = (this.col + 0.5) * gameData.canvas.grid;
@@ -61,3 +62,4 @@ function Player(gameData) {
 }
 
 export default Player;
+
